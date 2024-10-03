@@ -13,11 +13,13 @@ public class BallSpawner : MonoBehaviour
     private int newSpawnPointIndex;
 
     private BallsPool ballsPool;
+    private GameScoreContainer gameScoreContainer;
 
     [Inject]
-    private void Construct(BallsPool pool)
+    private void Construct(BallsPool pool, GameScoreContainer container)
     {
         ballsPool = pool;
+        gameScoreContainer = container;
     }
 
     private void Start()
@@ -28,12 +30,19 @@ public class BallSpawner : MonoBehaviour
     public void SpawnBall()
     {
         newSpawnPoint = ChooseRandomSpawnPoint();
-        ballsPool.SpawnBall(newSpawnPoint.position);
+        Ball newBall = ballsPool.SpawnBall(newSpawnPoint.position);
+        SetupBall(newBall);
     }
 
     private Transform ChooseRandomSpawnPoint()
     {
         newSpawnPointIndex = rand.Next(ballSpawnPoints.Length);
         return ballSpawnPoints[newSpawnPointIndex];
+    }
+
+    private void SetupBall(Ball ball)
+    {
+        ball.SetGameScoreContainer(gameScoreContainer);
+        ball.ResetCollisionFlag();
     }
 }
